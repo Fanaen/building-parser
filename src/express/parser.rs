@@ -8,7 +8,7 @@ use crate::express::entity::Entity;
 pub struct ExpressParser;
 
 pub fn parse() {
-    let pairs = ExpressParser::parse(Rule::express, include_str!("../../data/IFC2X3_TC1.exp"))
+    let pairs = ExpressParser::parse(Rule::express, include_str!("../../data/ap242_is_mim_lf_v1.36.exp"))
         .unwrap_or_else(|e| panic!("{}", e));
 
     let mut entity = 0;
@@ -19,11 +19,11 @@ pub fn parse() {
             Rule::schema => println!("{:?}", Schema::from_pair(pair)),
             Rule::entity => {
                 entity += 1;
-                println!("{:?}", Entity::from_pair(pair))
+                // println!("{:?}", Entity::from_pair(pair))
             }
             Rule::defined_data_type => {
                 defined_data_type += 1;
-                println!("{:?}", DefinedDataType::from_pair(pair))
+                //println!("{:?}", DefinedDataType::from_pair(pair))
             }
             Rule::unparsed => {
                 print!("{}", pair.as_str());

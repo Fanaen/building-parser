@@ -1,12 +1,13 @@
 use pest::iterators::Pair;
 use crate::express::parser::Rule;
+use crate::express::data_type::DefinableDataType;
 
 #[derive(Debug)]
 pub enum PrimitiveType {
     Real,
     Integer,
     Number,
-    String,
+    String(Option<i32>),
     Binary,
     Boolean,
     Logical,
@@ -15,15 +16,26 @@ pub enum PrimitiveType {
 impl PrimitiveType {
     pub fn from_pair(pair: Pair<Rule>) -> PrimitiveType {
         assert!(pair.as_rule() == Rule::primitive_type);
+
         match pair.as_str() {
             "REAL" => PrimitiveType::Real,
             "INTEGER" => PrimitiveType::Integer,
             "NUMBER" => PrimitiveType::Number,
-            "STRING" => PrimitiveType::String,
+            "STRING" => PrimitiveType::String(None),
             "BINARY" => PrimitiveType::Binary,
             "BOOLEAN" => PrimitiveType::Boolean,
             "LOGICAL" => PrimitiveType::Logical,
-            token @ _ => panic!("Unknown PrimitiveType value: {}", token)
+            token @ _ => {
+                // Handle the "STRING(22) FIXED" special case
+                let mut tokens = pair.into_inner();
+                if let sub_token = tokens.next() {
+                    let fixed_size = sub_token.unwrap().as_str().parse::<i32>().ok();
+                    return  PrimitiveType::String(fixed_size);
+                }
+                else {
+                    panic!("Unknown PrimitiveType value: {}", token)
+                }
+            }
         }
     }
 }
@@ -54,7 +66,7 @@ pub struct Aggregation {
     pub aggregation_type: AggregationType,
     pub min: Option<i32>,
     pub max: Option<i32>,
-    pub aggregated_type: PrimitiveType
+    pub aggregated_type: PrimitiveOrNamedType
 }
 
 impl Aggregation {
@@ -68,7 +80,7 @@ impl Aggregation {
 
         Aggregation {
             aggregation_type: AggregationType::from_pair(aggregation_type_token),
-            aggregated_type: PrimitiveType::from_pair(complex_type_token),
+            aggregated_type: PrimitiveOrNamedType::from_pair(complex_type_token),
             min,
             max
         }
@@ -116,18 +128,17 @@ impl Select {
 }
 
 #[derive(Debug)]
-pub enum ComplexType {
+pub enum PrimitiveOrNamedType {
     PrimitiveType(PrimitiveType),
-    Aggregation(Aggregation)
+    Name(String)
 }
 
 
-impl ComplexType {
-    pub fn from_pair(pair: Pair<Rule>) -> ComplexType {
+impl PrimitiveOrNamedType {
+    pub fn from_pair(pair: Pair<Rule>) -> PrimitiveOrNamedType {
         match pair.as_rule() {
-            Rule::primitive_type => ComplexType::PrimitiveType(PrimitiveType::from_pair(pair)),
-            Rule::aggregation => ComplexType::Aggregation(Aggregation::from_pair(pair)),
-            token @ _ => panic!("Unknown ComplexType rule: {:?}", token)
+            Rule::primitive_type => PrimitiveOrNamedType::PrimitiveType(PrimitiveType::from_pair(pair)),
+            _ => PrimitiveOrNamedType::Name(pair.as_str().to_owned())
         }
     }
 }

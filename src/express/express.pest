@@ -1,20 +1,23 @@
-// comment = { "(" ~  "*" ~ !( "*" ) ~ ANY ~ "*)" }
 comment = _{ "(*" ~ (!( "*)" ) ~ ANY)* ~ "*)"}
-
 space = _{ WHITE_SPACE | NEWLINE }
 spaces = _{ space* }
 
 name = { (ASCII_ALPHANUMERIC | "_" )+ }
+number = { ASCII_DIGIT+ }
+
+string_type = { "STRING" ~ spaces ~ ( "(" ~ spaces ~ number ~ spaces ~ ")" ~ spaces ~ "FIXED")?}
 
 primitive_type = {
    "REAL"
  | "INTEGER"
  | "NUMBER"
- | "STRING"
+ | string_type
  | "BINARY"
  | "BOOLEAN"
  | "LOGICAL"
 }
+
+primitive_or_named_type = _{ primitive_type | name }
 
 aggregation_type = {
    "LIST"
@@ -23,19 +26,16 @@ aggregation_type = {
  | "BAG"
 }
 
+
 enumeration = { "ENUMERATION" ~ spaces ~ "OF" ~ spaces ~ "(" ~ (spaces ~ name ~ spaces ~ ",")* ~ spaces ~ name ~ spaces ~ ")"  }
 select = { "SELECT" ~ spaces ~ "(" ~ (spaces ~ name ~ spaces ~ ",")* ~ spaces ~ name ~ spaces ~ ")"  }
 
 aggregation_min_numbering = { ASCII_DIGIT+ }
 aggregation_max_numbering = { ( "?" | ASCII_DIGIT+) }
-aggregation_numbering = { ( "[" ~ aggregation_min_numbering ~ ":" ~ aggregation_max_numbering ~ "]" )? }
+aggregation_numbering = { ( "[" ~spaces ~ aggregation_min_numbering ~ spaces ~":" ~spaces ~ aggregation_max_numbering ~spaces ~ "]" )? }
 
-aggregation = { aggregation_type ~ spaces ~ aggregation_numbering ~ spaces ~ "OF" ~ spaces ~ primitive_type }
+aggregation = { aggregation_type ~ spaces ~ aggregation_numbering ~ spaces ~ "OF" ~ spaces ~ primitive_or_named_type }
 
-complex_type = _{
-   aggregation
- | primitive_type
-}
 
 definable_data_type = _{
    aggregation
