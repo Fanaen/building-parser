@@ -1,0 +1,30 @@
+// comment = { "(" ~  "*" ~ !( "*" ) ~ ANY ~ "*)" }
+comment = _{ "(*" ~ (!( "*)" ) ~ ANY)* ~ "*)"}
+primitive_type = { "REAL"
+    | "INTEGER"
+    | "NUMBER"
+    | "STRING"
+    | "BINARY"
+    | "BOOLEAN"
+    | "LOGICAL" }
+
+space = _{ (WHITE_SPACE | NEWLINE)* }
+
+schema = { "SCHEMA" ~ space ~ ASCII_ALPHANUMERIC+ ~ space ~ ";" }
+
+data_type = { "TYPE " ~ space ~ name ~ space ~ "=" ~ space ~ primitive_type ~ ";" ~ data_type_content ~ "END_TYPE;"}
+data_type_content = _{ (!( "END_TYPE;" ) ~ ANY)* }
+
+entity = { "ENTITY " ~ space ~ name ~ space ~ entity_content ~ "END_ENTITY;"}
+entity_content = _{ (!( "END_ENTITY;" ) ~ ANY)* }
+
+name = { ASCII_ALPHANUMERIC+ }
+
+instruction = _{ WHITE_SPACE | NEWLINE
+                     | comment
+                     | schema
+                     | data_type
+                     | entity
+                     | ANY }
+
+express = _{ (instruction)* }

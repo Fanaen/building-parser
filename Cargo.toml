@@ -5,13 +5,21 @@ authors = ["Elouan Poupard-Cosquer <elouan.poupard.cosquer@methodinthemadness.eu
 edition = "2018"
 
 [lib]
+name="lib"
+path="src/lib.rs"
 crate-type = ["cdylib", "rlib"]
+
+[[bin]]
+name = "bin"
+path = "src/bin.rs"
 
 [features]
 default = ["console_error_panic_hook"]
 
 [dependencies]
 wasm-bindgen = "0.2"
+pest = "2.1.1"
+pest_derive = "2.1.0"
 
 # The `console_error_panic_hook` crate provides better debugging of panics by
 # logging them with `console.error`. This is great for development, but requires
