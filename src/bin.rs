@@ -4,8 +4,8 @@ extern crate pest_derive;
 
 mod express;
 
-use express::test;
+use express::parser::parse;
 
 pub fn main() {
-    test();
+    parse();
 }

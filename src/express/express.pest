@@ -1,5 +1,11 @@
 // comment = { "(" ~  "*" ~ !( "*" ) ~ ANY ~ "*)" }
 comment = _{ "(*" ~ (!( "*)" ) ~ ANY)* ~ "*)"}
+
+space = _{ WHITE_SPACE | NEWLINE }
+spaces = _{ space* }
+
+name = { ASCII_ALPHANUMERIC+ }
+
 primitive_type = { "REAL"
     | "INTEGER"
     | "NUMBER"
@@ -8,23 +14,21 @@ primitive_type = { "REAL"
     | "BOOLEAN"
     | "LOGICAL" }
 
-space = _{ (WHITE_SPACE | NEWLINE)* }
+schema = { "SCHEMA" ~ spaces ~ name ~ spaces ~ ";" }
 
-schema = { "SCHEMA" ~ space ~ ASCII_ALPHANUMERIC+ ~ space ~ ";" }
+defined_data_type = { "TYPE " ~ spaces ~ name ~ spaces ~ "=" ~ spaces ~ primitive_type ~ ";" ~ defined_data_type_content ~ "END_TYPE;"}
+defined_data_type_content = _{ (!( "END_TYPE;" ) ~ ANY)* }
 
-data_type = { "TYPE " ~ space ~ name ~ space ~ "=" ~ space ~ primitive_type ~ ";" ~ data_type_content ~ "END_TYPE;"}
-data_type_content = _{ (!( "END_TYPE;" ) ~ ANY)* }
-
-entity = { "ENTITY " ~ space ~ name ~ space ~ entity_content ~ "END_ENTITY;"}
+entity = { "ENTITY " ~ spaces ~ name ~ spaces ~ entity_content ~ "END_ENTITY;"}
 entity_content = _{ (!( "END_ENTITY;" ) ~ ANY)* }
 
-name = { ASCII_ALPHANUMERIC+ }
-
-instruction = _{ WHITE_SPACE | NEWLINE
-                     | comment
-                     | schema
-                     | data_type
-                     | entity
-                     | ANY }
+instruction = _{
+   schema
+ | defined_data_type
+ | entity
+ | comment
+ | space
+ | ANY
+}
 
 express = _{ (instruction)* }
