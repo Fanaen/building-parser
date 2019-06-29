@@ -2,10 +2,6 @@
 ///  - https://technical.buildingsmart.org/standards/ifc/ifc-schema-specifications/
 ///  - https://www.cax-if.org/joint_testing_info.html#schemas
 
-//pub fn test() {
-//    println!("{}", )
-//}
-
 use pest::Parser;
 
 #[derive(Parser)]
