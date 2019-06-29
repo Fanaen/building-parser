@@ -4,23 +4,56 @@ comment = _{ "(*" ~ (!( "*)" ) ~ ANY)* ~ "*)"}
 space = _{ WHITE_SPACE | NEWLINE }
 spaces = _{ space* }
 
-name = { ASCII_ALPHANUMERIC+ }
+name = { (ASCII_ALPHANUMERIC | "_" )+ }
 
-primitive_type = { "REAL"
-    | "INTEGER"
-    | "NUMBER"
-    | "STRING"
-    | "BINARY"
-    | "BOOLEAN"
-    | "LOGICAL" }
+primitive_type = {
+   "REAL"
+ | "INTEGER"
+ | "NUMBER"
+ | "STRING"
+ | "BINARY"
+ | "BOOLEAN"
+ | "LOGICAL"
+}
+
+aggregation_type = {
+   "LIST"
+ | "ARRAY"
+ | "SET"
+ | "BAG"
+}
+
+enumeration = { "ENUMERATION" ~ spaces ~ "OF" ~ spaces ~ "(" ~ (spaces ~ name ~ spaces ~ ",")* ~ spaces ~ name ~ spaces ~ ")"  }
+select = { "SELECT" ~ spaces ~ "(" ~ (spaces ~ name ~ spaces ~ ",")* ~ spaces ~ name ~ spaces ~ ")"  }
+
+aggregation_min_numbering = { ASCII_DIGIT+ }
+aggregation_max_numbering = { ( "?" | ASCII_DIGIT+) }
+aggregation_numbering = { ( "[" ~ aggregation_min_numbering ~ ":" ~ aggregation_max_numbering ~ "]" )? }
+
+aggregation = { aggregation_type ~ spaces ~ aggregation_numbering ~ spaces ~ "OF" ~ spaces ~ primitive_type }
+
+complex_type = _{
+   aggregation
+ | primitive_type
+}
+
+definable_data_type = _{
+   aggregation
+ | enumeration
+ | select
+ | primitive_type
+ | name
+}
 
 schema = { "SCHEMA" ~ spaces ~ name ~ spaces ~ ";" }
 
-defined_data_type = { "TYPE " ~ spaces ~ name ~ spaces ~ "=" ~ spaces ~ primitive_type ~ ";" ~ defined_data_type_content ~ "END_TYPE;"}
+defined_data_type = { "TYPE " ~ spaces ~ name ~ spaces ~ "=" ~ spaces ~ definable_data_type ~ spaces ~ ";" ~ defined_data_type_content ~ "END_TYPE;"}
 defined_data_type_content = _{ (!( "END_TYPE;" ) ~ ANY)* }
 
 entity = { "ENTITY " ~ spaces ~ name ~ spaces ~ entity_content ~ "END_ENTITY;"}
 entity_content = _{ (!( "END_ENTITY;" ) ~ ANY)* }
+
+unparsed = { ANY }
 
 instruction = _{
    schema
@@ -28,7 +61,7 @@ instruction = _{
  | entity
  | comment
  | space
- | ANY
+ | unparsed
 }
 
 express = _{ (instruction)* }

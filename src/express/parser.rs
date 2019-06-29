@@ -11,12 +11,23 @@ pub fn parse() {
     let pairs = ExpressParser::parse(Rule::express, include_str!("../../data/IFC2X3_TC1.exp"))
         .unwrap_or_else(|e| panic!("{}", e));
 
-    // Because ident_list is silent, the iterator will contain idents
+    let mut entity = 0;
+    let mut defined_data_type = 0;
+
     for pair in pairs {
         match pair.as_rule() {
             Rule::schema => println!("{:?}", Schema::from_pair(pair)),
-            Rule::entity => println!("{:?}", Entity::from_pair(pair)),
-            Rule::defined_data_type => println!("{:?}", DefinedDataType::from_pair(pair)),
+            Rule::entity => {
+                entity += 1;
+                println!("{:?}", Entity::from_pair(pair))
+            }
+            Rule::defined_data_type => {
+                defined_data_type += 1;
+                println!("{:?}", DefinedDataType::from_pair(pair))
+            }
+            Rule::unparsed => {
+                print!("{}", pair.as_str());
+            }
             _ => {
                 // A pair is a combination of the rule which matched and a span of input
                 print!("\n{:?}:", pair.as_rule());
@@ -30,4 +41,7 @@ pub fn parse() {
     }
 
     println!();
+    println!();
+    println!("Entity: {}", entity);
+    println!("Defined data types: {}", defined_data_type);
 }
