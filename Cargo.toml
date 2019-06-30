@@ -21,6 +21,9 @@ wasm-bindgen = "0.2"
 pest = "2.1.1"
 pest_derive = "2.1.0"
 
+quote = "0.6.12"
+syn = "0.15.39"
+
 # The `console_error_panic_hook` crate provides better debugging of panics by
 # logging them with `console.error`. This is great for development, but requires
 # all the `std::fmt` and `std::panicking` infrastructure, so isn't great for

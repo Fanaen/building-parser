@@ -1,10 +1,17 @@
 extern crate pest;
 #[macro_use]
 extern crate pest_derive;
+//#[macro_use]
+extern crate quote;
+//#[macro_use]
+extern crate syn;
+extern crate proc_macro;
 
 mod express;
+mod generation;
 
 use crate::express::schema::SchemaStats;
+use crate::generation::Generate;
 use express::parser::parse;
 use std::fs::File;
 use std::io::{BufReader, Read};
@@ -96,6 +103,9 @@ fn assert_completeness(path: &str, expected: SchemaStats) -> std::io::Result<()>
             // Compare the count and expected
             let stats = schema.stats();
             stats.display_completeness(&expected);
+
+            // Generate the types in Rust
+            schema.generate();
         }
         _ => println!("{: >20}: {}", " Error", "Too many schema matched"),
     }
