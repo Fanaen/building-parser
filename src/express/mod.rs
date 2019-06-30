@@ -7,6 +7,7 @@
 pub struct ExpressParser;
 
 pub mod schema;
+pub mod primitives;
 pub mod data_type;
 pub mod entity;
-pub mod primitives;
+pub mod function;

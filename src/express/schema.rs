@@ -1,5 +1,6 @@
-use crate::express::data_type::DefinedDataType;
 use crate::express::entity::Entity;
+use crate::express::data_type::DefinedDataType;
+use crate::express::function::Function;
 use crate::express::{Rule, ExpressParser};
 use pest::Parser;
 use pest::iterators::Pair;
@@ -10,6 +11,7 @@ pub struct Schema {
     pub name: String,
     pub entities: Vec<Entity>,
     pub defined_data_types: Vec<DefinedDataType>,
+    pub functions: Vec<Function>,
 }
 
 impl Schema {
@@ -40,6 +42,7 @@ impl Schema {
             name,
             entities: Vec::new(),
             defined_data_types: Vec::new(),
+            functions: Vec::new(),
         };
 
         for token in tokens {
@@ -48,6 +51,8 @@ impl Schema {
                 Rule::defined_data_type => schema
                     .defined_data_types
                     .push(DefinedDataType::from_pair(token)),
+                Rule::function => schema.functions.push(Function::from_pair(token)),
+                Rule::constant => debug!("Found a CONSTANT block"),
                 Rule::unparsed => debug!("{}", token.as_str()),
                 _ => {
                     // A pair is a combination of the rule which matched and a span of input
@@ -68,6 +73,7 @@ impl Schema {
         SchemaStats {
             entities: self.entities.len(),
             defined_data_types: self.defined_data_types.len(),
+            functions: self.functions.len(),
         }
     }
 }
@@ -76,16 +82,18 @@ impl Schema {
 pub struct SchemaStats {
     pub entities: usize,
     pub defined_data_types: usize,
+    pub functions: usize,
 }
 
 impl SchemaStats {
     pub fn display_completeness(&self, expected: &SchemaStats) {
-        display_stat("Entity", self.entities, expected.entities);
+        display_stat("Entities", self.entities, expected.entities);
         display_stat(
             "Defined data types",
             self.defined_data_types,
             expected.defined_data_types,
         );
+        display_stat("Functions", self.functions, expected.functions);
     }
 }
 
