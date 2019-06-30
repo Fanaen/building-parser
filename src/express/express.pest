@@ -2,7 +2,7 @@ short_comment = _{ "--" ~ (!NEWLINE ~ ANY)* }
 long_comment = _{ "(*" ~ (!( "*)" ) ~ ANY)* ~ "*)"}
 comment = _{ long_comment | short_comment }
 
-space = _{ WHITE_SPACE | NEWLINE }
+space = _{ WHITE_SPACE | NEWLINE | comment }
 spaces = _{ space* }
 
 name = { (ASCII_ALPHANUMERIC | "_" )+ }
@@ -32,7 +32,7 @@ aggregation_type = {
 
 
 enumeration = { "ENUMERATION" ~ spaces ~ "OF" ~ spaces ~ "(" ~ (spaces ~ name ~ spaces ~ ",")* ~ spaces ~ name ~ spaces ~ ")"  }
-select = { "SELECT" ~ spaces ~ "(" ~ (spaces ~ name ~ spaces ~ ",")* ~ spaces ~ name ~ spaces ~ ")"  }
+select = { "SELECT" ~ spaces ~ "(" ~ (spaces ~ name ~ spaces ~ ",")* ~ spaces ~ name ~ spaces ~ ")" }
 
 aggregation_min_numbering = { ASCII_DIGIT+ }
 aggregation_max_numbering = { ( "?" | ASCII_DIGIT+) }
@@ -60,7 +60,7 @@ constant = { "CONSTANT" ~ space ~ spaces ~ constant_content ~ spaces ~ "END_CONS
 constant_content = _{ (!( "END_CONSTANT;" ) ~ ANY)* }
 
 function = { "FUNCTION" ~ space ~ spaces ~ name ~ spaces ~ function_content ~ "END_FUNCTION;"}
-function_content = _{ (!( "END_FUNCTION;" ) ~ ANY)* }
+function_content = _{ ( function | ( !( "END_FUNCTION;" ) ~ ANY ) )* }
 
 rule = { "RULE" ~ space ~ spaces ~ name ~ spaces ~ rule_content ~ "END_RULE;"}
 rule_content = _{ (!( "END_RULE;" ) ~ ANY)* }
@@ -78,10 +78,9 @@ instruction = _{
  | rule
  | procedure
  | constant
- | comment
  | space
  | unparsed
 }
 
 schema = { "SCHEMA" ~ spaces ~ name ~ spaces ~ ";" ~ (instruction)* ~ "END_SCHEMA;" }
-express = _{ (schema | comment | space)* }
+express = _{ (schema | space)* }

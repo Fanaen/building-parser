@@ -61,7 +61,7 @@ impl Schema {
                 Rule::rule => schema.rules.push(ExpressRule::from_pair(token)),
                 Rule::procedure => schema.procedures.push(Procedure::from_pair(token)),
                 Rule::constant => debug!("Found a CONSTANT block"),
-                Rule::unparsed => println!("{}", token.as_str()),
+                Rule::unparsed => debug!("{}", token.as_str()),
                 _ => {
                     // A pair is a combination of the rule which matched and a span of input
                     info!("\n{:?}:", token.as_rule());
@@ -112,6 +112,8 @@ impl SchemaStats {
 }
 
 fn display_stat(name: &str, count: usize, expected: usize) {
+    if count == 0 && expected == 0 { return; }
+
     println!(
         "{: >20}: {: >6} {: >5} / {: <5}",
         name,
