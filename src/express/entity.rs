@@ -1,7 +1,8 @@
-use crate::express::parser::Rule;
+use crate::express::Rule;
 use pest::iterators::Pair;
+use serde::Serialize;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct Entity {
     pub name: String,
 }

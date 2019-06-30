@@ -1,8 +1,9 @@
-use crate::express::parser::Rule;
+use crate::express::Rule;
 use crate::express::primitives::{Aggregation, Enumeration, PrimitiveType, Select};
 use pest::iterators::Pair;
+use serde::Serialize;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct DefinedDataType {
     pub name: String,
     pub data_type: DefinableDataType,
@@ -26,7 +27,7 @@ impl DefinedDataType {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub enum DefinableDataType {
     PrimitiveType(PrimitiveType),
     Aggregation(Aggregation),

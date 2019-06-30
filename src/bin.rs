@@ -12,9 +12,10 @@ mod generation;
 
 use crate::express::schema::{SchemaStats, Schema};
 use crate::generation::Generate;
+use std::path::Path;
 use std::fs::File;
 use std::io::{BufReader, Read};
-use std::path::Path;
+use std::fs;
 
 pub fn main() -> std::io::Result<()> {
     // STEP
@@ -95,22 +96,28 @@ fn assert_completeness(path: &str, expected: SchemaStats) -> std::io::Result<()>
     // Analyse it
     // There is one schema per file
     match schemas.len() {
+        1 => process_schema(schemas.first().unwrap(), filename, expected)?,
         0 => println!("{: >20}: {}", " Error", "No valid schema matched"),
-        1 => {
-            let schema = schemas.first().unwrap();
-
-            // Compare the count and expected
-            let stats = schema.stats();
-            stats.display_completeness(&expected);
-
-            // Generate the types in Rust
-            schema.generate();
-        }
         _ => println!("{: >20}: {}", " Error", "Too many schema matched"),
     }
 
     // Add a line to avoid packed text
     println!();
+
+    Ok(())
+}
+
+fn process_schema(schema: &Schema, filename: &str, expected: SchemaStats) -> std::io::Result<()> {
+    // Compare the count and expected
+    let stats = schema.stats();
+    stats.display_completeness(&expected);
+
+    // Generate the schema as JSON
+    let serialized = serde_json::to_string_pretty(&schema).unwrap();
+    fs::write(format!("data/generated/{}.json", filename), serialized).expect("Unable to write file");
+
+    // Generate the types in Rust
+    schema.generate();
 
     Ok(())
 }

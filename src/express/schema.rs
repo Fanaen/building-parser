@@ -1,15 +1,11 @@
 use crate::express::data_type::DefinedDataType;
 use crate::express::entity::Entity;
-use crate::express::parser::Rule;
-use pest::iterators::Pair;
+use crate::express::{Rule, ExpressParser};
 use pest::Parser;
+use pest::iterators::Pair;
+use serde::Serialize;
 
-#[derive(Parser)]
-#[grammar = "express/express.pest"]
-pub struct ExpressParser;
-
-
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct Schema {
     pub name: String,
     pub entities: Vec<Entity>,

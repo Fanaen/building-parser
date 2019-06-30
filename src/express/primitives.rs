@@ -1,7 +1,8 @@
-use crate::express::parser::Rule;
+use crate::express::Rule;
 use pest::iterators::Pair;
+use serde::Serialize;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub enum PrimitiveType {
     Real,
     Integer,
@@ -38,7 +39,7 @@ impl PrimitiveType {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub enum AggregationType {
     List,
     Array,
@@ -59,7 +60,7 @@ impl AggregationType {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct Aggregation {
     pub aggregation_type: AggregationType,
     pub min: Option<i32>,
@@ -102,7 +103,7 @@ impl Aggregation {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct Enumeration {
     pub values: Vec<String>,
 }
@@ -115,7 +116,7 @@ impl Enumeration {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub struct Select {
     pub values: Vec<String>,
 }
@@ -128,7 +129,7 @@ impl Select {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize)]
 pub enum PrimitiveOrNamedType {
     PrimitiveType(PrimitiveType),
     Name(String),
