@@ -1,4 +1,7 @@
-comment = _{ "(*" ~ (!( "*)" ) ~ ANY)* ~ "*)"}
+short_comment = _{ "--" ~ (!NEWLINE ~ ANY)* }
+long_comment = _{ "(*" ~ (!( "*)" ) ~ ANY)* ~ "*)"}
+comment = _{ long_comment | short_comment }
+
 space = _{ WHITE_SPACE | NEWLINE }
 spaces = _{ space* }
 
@@ -45,7 +48,6 @@ definable_data_type = _{
  | name
 }
 
-schema = { "SCHEMA" ~ spaces ~ name ~ spaces ~ ";" }
 
 defined_data_type = { "TYPE " ~ spaces ~ name ~ spaces ~ "=" ~ spaces ~ definable_data_type ~ spaces ~ ";" ~ defined_data_type_content ~ "END_TYPE;"}
 defined_data_type_content = _{ (!( "END_TYPE;" ) ~ ANY)* }
@@ -53,7 +55,13 @@ defined_data_type_content = _{ (!( "END_TYPE;" ) ~ ANY)* }
 entity = { "ENTITY " ~ spaces ~ name ~ spaces ~ entity_content ~ "END_ENTITY;"}
 entity_content = _{ (!( "END_ENTITY;" ) ~ ANY)* }
 
-unparsed = { ANY }
+constant = { "CONSTANT " ~ spaces ~ constant_content ~ spaces ~ "END_ENTITY;"}
+constant_content = _{ (!( "END_CONSTANT;" ) ~ ANY)* }
+
+function = { "FUNCTION " ~ spaces ~ function ~ function_content ~ "END_FUNCTION;"}
+function_content = _{ (!( "END_FUNCTION;" ) ~ ANY)* }
+
+unparsed = { !( "END_SCHEMA;" ) ~ ANY }
 
 instruction = _{
    schema
@@ -64,4 +72,5 @@ instruction = _{
  | unparsed
 }
 
-express = _{ (instruction)* }
+schema = { "SCHEMA" ~ spaces ~ name ~ spaces ~ ";" ~ (instruction)* ~ "END_SCHEMA;" }
+express = _{ (schema | comment | space)* }
