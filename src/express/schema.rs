@@ -21,7 +21,7 @@ impl Schema {
         for pair in pairs {
             match pair.as_rule() {
                 Rule::schema => schemas.push(Schema::from_pair(pair)),
-                token @ _ => println!("Unhandled rule '{:?}'", token),
+                token @ _ => error!("Unhandled rule '{:?}'", token),
             }
         }
 
@@ -48,16 +48,14 @@ impl Schema {
                 Rule::defined_data_type => schema
                     .defined_data_types
                     .push(DefinedDataType::from_pair(token)),
-                Rule::unparsed => {
-                    // print!("{}", pair.as_str());
-                }
+                Rule::unparsed => debug!("{}", token.as_str()),
                 _ => {
                     // A pair is a combination of the rule which matched and a span of input
-                    print!("\n{:?}:", token.as_rule());
+                    info!("\n{:?}:", token.as_rule());
 
                     // A pair can be converted to an iterator of the tokens which make it up:
                     for inner_pair in token.into_inner() {
-                        print!(" {}", inner_pair.as_str());
+                        info!(" {}", inner_pair.as_str());
                     }
                 }
             }

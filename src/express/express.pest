@@ -61,7 +61,7 @@ constant_content = _{ (!( "END_CONSTANT;" ) ~ ANY)* }
 function = { "FUNCTION " ~ spaces ~ function ~ function_content ~ "END_FUNCTION;"}
 function_content = _{ (!( "END_FUNCTION;" ) ~ ANY)* }
 
-unparsed = { !( "END_SCHEMA;" ) ~ ANY }
+unparsed = { (!( "END_SCHEMA;" | space ) ~ ANY)+ }
 
 instruction = _{
    schema

@@ -6,6 +6,9 @@ extern crate quote;
 //#[macro_use]
 extern crate syn;
 extern crate proc_macro;
+#[macro_use]
+extern crate log;
+extern crate env_logger;
 
 mod express;
 mod generation;
@@ -18,6 +21,8 @@ use std::io::{BufReader, Read};
 use std::fs;
 
 pub fn main() -> std::io::Result<()> {
+    env_logger::init();
+
     // STEP
     assert_completeness(
         "data/ap209ed2_is_mim_lf_v1.46.exp",
