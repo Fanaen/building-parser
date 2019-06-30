@@ -8,7 +8,8 @@ spaces = _{ space* }
 name = { (ASCII_ALPHANUMERIC | "_" )+ }
 number = { ASCII_DIGIT+ }
 
-string_type = { "STRING" ~ spaces ~ ( "(" ~ spaces ~ number ~ spaces ~ ")" ~ spaces ~ "FIXED")?}
+string_fixed = { "FIXED" }
+string_type = { "STRING" ~ spaces ~ ( "(" ~ spaces ~ number ~ spaces ~ ")" ~ spaces ~ string_fixed? )?}
 
 primitive_type = {
    "REAL"

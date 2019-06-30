@@ -3,11 +3,17 @@ use pest::iterators::Pair;
 use serde::Serialize;
 
 #[derive(Debug, Serialize)]
+pub struct StringType {
+    max_length: Option<i32>,
+    fixed_length: bool,
+}
+
+#[derive(Debug, Serialize)]
 pub enum PrimitiveType {
     Real,
     Integer,
     Number,
-    String(Option<i32>),
+    String(StringType),
     Binary,
     Boolean,
     Logical,
@@ -21,7 +27,7 @@ impl PrimitiveType {
             "REAL" => PrimitiveType::Real,
             "INTEGER" => PrimitiveType::Integer,
             "NUMBER" => PrimitiveType::Number,
-            "STRING" => PrimitiveType::String(None),
+            "STRING" => PrimitiveType::String(StringType { max_length: None, fixed_length: false}),
             "BINARY" => PrimitiveType::Binary,
             "BOOLEAN" => PrimitiveType::Boolean,
             "LOGICAL" => PrimitiveType::Logical,
@@ -29,8 +35,13 @@ impl PrimitiveType {
                 // Handle the "STRING(22) FIXED" special case
                 let mut tokens = pair.into_inner();
                 if let Option::Some(sub_token) = tokens.next() {
-                    let fixed_size = sub_token.as_str().parse::<i32>().ok();
-                    return PrimitiveType::String(fixed_size);
+                    let max_length = sub_token.as_str().parse::<i32>().ok();
+                    let fixed_length = tokens.next().is_some();
+
+                    return PrimitiveType::String(StringType {
+                        max_length,
+                        fixed_length,
+                    });
                 } else {
                     panic!("Unknown PrimitiveType value: {}", token)
                 }
