@@ -18,6 +18,7 @@ impl Schema {
             .expect("Schema should have a name")
             .as_str()
             .to_owned();
+
         let mut schema = Schema {
             name,
             entities: Vec::new(),
