@@ -2,6 +2,12 @@ use crate::express::data_type::DefinedDataType;
 use crate::express::entity::Entity;
 use crate::express::parser::Rule;
 use pest::iterators::Pair;
+use pest::Parser;
+
+#[derive(Parser)]
+#[grammar = "express/express.pest"]
+pub struct ExpressParser;
+
 
 #[derive(Debug)]
 pub struct Schema {
@@ -11,6 +17,21 @@ pub struct Schema {
 }
 
 impl Schema {
+    pub fn extract_from_str(file_content: &str) -> Vec<Schema> {
+        let pairs = ExpressParser::parse(Rule::express, file_content).unwrap_or_else(|e| panic!("{}", e));
+
+        let mut schemas: Vec<Schema> = Vec::new();
+
+        for pair in pairs {
+            match pair.as_rule() {
+                Rule::schema => schemas.push(Schema::from_pair(pair)),
+                token @ _ => println!("Unhandled rule '{:?}'", token),
+            }
+        }
+
+        schemas
+    }
+
     pub fn from_pair(pair: Pair<Rule>) -> Schema {
         let mut tokens = pair.into_inner();
         let name = tokens

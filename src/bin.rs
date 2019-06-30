@@ -10,9 +10,8 @@ extern crate proc_macro;
 mod express;
 mod generation;
 
-use crate::express::schema::SchemaStats;
+use crate::express::schema::{SchemaStats, Schema};
 use crate::generation::Generate;
-use express::parser::parse;
 use std::fs::File;
 use std::io::{BufReader, Read};
 use std::path::Path;
@@ -91,7 +90,7 @@ fn assert_completeness(path: &str, expected: SchemaStats) -> std::io::Result<()>
     buf_reader.read_to_string(&mut contents)?;
 
     // Parse it
-    let schemas = parse(contents.as_str());
+    let schemas = Schema::extract_from_str(contents.as_str());
 
     // Analyse it
     // There is one schema per file
