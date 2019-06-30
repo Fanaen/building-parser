@@ -11,3 +11,5 @@ pub mod primitives;
 pub mod data_type;
 pub mod entity;
 pub mod function;
+pub mod rule;
+pub mod procedure;

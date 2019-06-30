@@ -50,17 +50,23 @@ definable_data_type = _{
 }
 
 
-defined_data_type = { "TYPE " ~ spaces ~ name ~ spaces ~ "=" ~ spaces ~ definable_data_type ~ spaces ~ ";" ~ defined_data_type_content ~ "END_TYPE;"}
+defined_data_type = { "TYPE" ~ space ~ spaces ~ name ~ spaces ~ "=" ~ spaces ~ definable_data_type ~ spaces ~ ";" ~ defined_data_type_content ~ "END_TYPE;"}
 defined_data_type_content = _{ (!( "END_TYPE;" ) ~ ANY)* }
 
-entity = { "ENTITY " ~ spaces ~ name ~ spaces ~ entity_content ~ "END_ENTITY;"}
+entity = { "ENTITY" ~ space ~ spaces ~ name ~ spaces ~ entity_content ~ "END_ENTITY;"}
 entity_content = _{ (!( "END_ENTITY;" ) ~ ANY)* }
 
-constant = { "CONSTANT " ~ spaces ~ constant_content ~ spaces ~ "END_ENTITY;"}
+constant = { "CONSTANT" ~ space ~ spaces ~ constant_content ~ spaces ~ "END_CONSTANT;"}
 constant_content = _{ (!( "END_CONSTANT;" ) ~ ANY)* }
 
-function = { "FUNCTION " ~ spaces ~ name ~ spaces ~ function_content ~ "END_FUNCTION;"}
+function = { "FUNCTION" ~ space ~ spaces ~ name ~ spaces ~ function_content ~ "END_FUNCTION;"}
 function_content = _{ (!( "END_FUNCTION;" ) ~ ANY)* }
+
+rule = { "RULE" ~ space ~ spaces ~ name ~ spaces ~ rule_content ~ "END_RULE;"}
+rule_content = _{ (!( "END_RULE;" ) ~ ANY)* }
+
+procedure = { "PROCEDURE" ~ space ~ spaces ~ name ~ spaces ~ procedure_content ~ "END_PROCEDURE;"}
+procedure_content = _{ (!( "END_PROCEDURE;" ) ~ ANY)* }
 
 unparsed = { (!( "END_SCHEMA;" | space ) ~ ANY)+ }
 
@@ -69,6 +75,8 @@ instruction = _{
  | defined_data_type
  | entity
  | function
+ | rule
+ | procedure
  | constant
  | comment
  | space

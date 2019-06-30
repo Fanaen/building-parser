@@ -29,7 +29,9 @@ pub fn main() -> std::io::Result<()> {
         SchemaStats {
             entities: 2_225,
             defined_data_types: 555,
-            functions: 310
+            functions: 310,
+            rules: 57,
+            procedures: 7,
         },
     )?;
     assert_completeness(
@@ -38,6 +40,8 @@ pub fn main() -> std::io::Result<()> {
             entities: 915,
             defined_data_types: 192,
             functions: 114,
+            rules: 272,
+            procedures: 0,
         },
     )?;
     assert_completeness(
@@ -46,6 +50,8 @@ pub fn main() -> std::io::Result<()> {
             entities: 1_726,
             defined_data_types: 370,
             functions: 280,
+            rules: 57,
+            procedures: 7,
         },
     )?;
 
@@ -56,6 +62,8 @@ pub fn main() -> std::io::Result<()> {
             entities: 653,
             defined_data_types: 327,
             functions: 38,
+            rules: 2,
+            procedures: 0,
         },
     )?;
     assert_completeness(
@@ -64,6 +72,8 @@ pub fn main() -> std::io::Result<()> {
             entities: 776,
             defined_data_types: 397,
             functions: 47,
+            rules: 2,
+            procedures: 0,
         },
     )?;
     assert_completeness(
@@ -72,6 +82,8 @@ pub fn main() -> std::io::Result<()> {
             entities: 801,
             defined_data_types: 400,
             functions: 47,
+            rules: 2,
+            procedures: 0,
         },
     )?;
     assert_completeness(
@@ -80,6 +92,8 @@ pub fn main() -> std::io::Result<()> {
             entities: 816,
             defined_data_types: 407,
             functions: 47,
+            rules: 2,
+            procedures: 0,
         },
     )
 }
