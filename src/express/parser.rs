@@ -7,8 +7,8 @@ use crate::express::entity::Entity;
 #[grammar = "express/express.pest"]
 pub struct ExpressParser;
 
-pub fn parse() {
-    let pairs = ExpressParser::parse(Rule::express, include_str!("../../data/ap242_is_mim_lf_v1.36.exp"))
+pub fn parse(file: &str, filename: &str) {
+    let pairs = ExpressParser::parse(Rule::express, file)
         .unwrap_or_else(|e| panic!("{}", e));
 
     let mut entity = 0;
@@ -26,7 +26,7 @@ pub fn parse() {
                 //println!("{:?}", DefinedDataType::from_pair(pair))
             }
             Rule::unparsed => {
-                print!("{}", pair.as_str());
+                // print!("{}", pair.as_str());
             }
             _ => {
                 // A pair is a combination of the rule which matched and a span of input
@@ -40,8 +40,7 @@ pub fn parse() {
         }
     }
 
-    println!();
-    println!();
-    println!("Entity: {}", entity);
-    println!("Defined data types: {}", defined_data_type);
+    println!("File {}", filename);
+    println!("  Entity: {}", entity);
+    println!("  Defined data types: {}", defined_data_type);
 }
